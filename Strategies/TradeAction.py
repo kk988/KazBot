@@ -6,6 +6,9 @@ class TradeAction():
     def __init__(self, time, action, shares=0):
         self.time = time
         self.action = action
+        
+        #not sure if we need to have this logic in this class or in the
+        #result class
         self.shares = shares
     
     def __str__(self):
