@@ -1,10 +1,16 @@
 # KazBot
 Maybe this will become a crypto-coin trading bot using gdax exchange
 
-Uses python 2.7.10
+Developed using python 2.7.10
+
+Required:
+iso8601
+gdax
 
 Short term goals
 - make tests use unittest -> create test readme -> create test suite?
 - finish backtest
-- add required libs to readme
+- add backtest test
+- add links to required libs. Also mention pip install annoyance (OSX only) when installing gdax.
+- Maybe look into that project tab on github...
 - come up with more short term goals :-P

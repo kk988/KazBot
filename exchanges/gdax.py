@@ -3,11 +3,6 @@
 # datetime.datetime.strptime("2014-11-06T10:34:47.123456Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 # iso8601.parse("2014-11-06T10:34:47.123456Z")
 
-#import gdax
-#import iso8601
-
-#public_client = gdax.PublicClient()
-
 # List of candles should be an list of Candle objects
 class CandleList():
     def __init__(self, list_of_candles=None, granularity=None):

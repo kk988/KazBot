@@ -3,7 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#LiClipse Project files
 *.project
+*.pydevproject
 
 # C extensions
 *.so
