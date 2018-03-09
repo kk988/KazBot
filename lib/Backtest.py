@@ -5,6 +5,9 @@ import iso8601
 import math
 import gdax
 
+#usage of pull data
+#test_input=pull_candles( datetime(2018, 2, 1, 0, 0, 0), datetime(2018, 2, 2, 0, 0, 0), 300)
+
 class Backtest():
     def __init__(self, start, end, granularity, strategy, **kwargs):
         # Pull data

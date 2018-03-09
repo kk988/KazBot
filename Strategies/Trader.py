@@ -46,7 +46,7 @@ class Trader():
         #not already in trend, start trend
         else:
             self.trend = curr_trend
-            self.persistence = 0
+            self.persistence = 1
                   
     def generate_trade_action(self, candle_time):                    
         #if persisted
