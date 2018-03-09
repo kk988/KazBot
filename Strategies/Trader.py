@@ -54,7 +54,7 @@ class Trader():
             self.persistence = 0
                 
             if self.trend == self.HIGH:
-                return TradeAction(candle_time, TradeAction.SELL, 'all')
+                return TradeAction(candle_time, TradeAction.SELL)
             else:
-                return TradeAction(candle_time, TradeAction.BUY, 'all')
-        return TradeAction(candle_time, TradeAction.HOLD, 'all')
+                return TradeAction(candle_time, TradeAction.BUY)
+        return TradeAction(candle_time, TradeAction.HOLD)
