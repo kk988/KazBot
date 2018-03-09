@@ -58,35 +58,3 @@ class Trader():
             else:
                 return TradeAction(candle_time, TradeAction.BUY, 'all')
         return TradeAction(candle_time, TradeAction.HOLD, 'all')
-                    
-        
-        
-
-
-
-
-
-
-
-
-
-
-#buy if the previous stoch rsi was 1 and the current is not,
-#sell if the previous stoch rsi was 0 and the current is not
-#def stoke_limit_change(s_rsi, prev_s_rsi):
-#    if (s_rsi != 1 and prev_s_rsi == 1):
-#        return "SELL"
-#    elif (s_rsi != 0 and prev_s_rsi == 0):
-#        return "BUY"
-#    else:
-#        return "HOLD"
-
-#buy if the rsi/stoch rsi is above high thresh
-#sell if it's below low thresh
-#def thresh_test(high, low, rsi):
-#    if rsi >= high:
-#        return "BUY"
-#    elif rsi <= low:
-#        return "SELL"
-#    else:
-#        return "HOLD"
