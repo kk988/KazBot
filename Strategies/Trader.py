@@ -44,6 +44,9 @@ class Trader():
                 else:
                     self.trend = self.LOW
                     self.persistance = 0
+            #not in trend. so end the trend
+            elif self.trend:
+                self.trend = None
                 
             #test if persisted
             if self.persistance == self.PERSISTANCE_LIMIT:
