@@ -1,6 +1,13 @@
 from Strategies.TradeAction import TradeAction
 from exchanges.gdax import CandleList
 from Strategies.Simulation import Simulation
+from Strategies.StochRSI import StochRSI
+from Strategies.Trader import Trader
+from lib.Backtest import pull_candles
+from datetime import datetime
+import iso8601
+import math
+import gdax
 
 test_input = [
     [1514764800, 225, 227.98, 227.18, 226.2, 2146.597926890001],
@@ -151,3 +158,23 @@ test_simulation = Simulation(test_candle_list, trader_output, 5000.00, 0.0)
 
 print "price change %: ", test_simulation.get_price_change_percent() * 100
 print "value change %: ", test_simulation.get_value_change_percent() * 100
+print "value: $", test_simulation.value()
+print "trades: ", test_simulation.get_trades()
+
+if round(test_simulation.get_value_change_percent(), 7) == -0.0034501:
+    print "\nCorrect Output."
+else:
+    print "\nIncorrect Output."
+
+test_input=pull_candles( datetime(2018, 1, 1, 0, 0, 0), datetime(2018, 2, 1, 0, 0, 0), 21600)
+#test_input += pull_candles( datetime(2018, 2, 1, 0, 0, 0), datetime(2018, 2, 2, 0, 0, 0), 300)
+
+test_candle_list = CandleList(test_input, 21600)
+s_rsi_obj = StochRSI(test_candle_list, 14)
+trader_obj = Trader(s_rsi_obj.get_stoch_rsi_vals())
+simulation_obj = Simulation(test_candle_list, trader_obj.get_actions(), 5000.00, 0.0)
+
+print "price change %: ", simulation_obj.get_price_change_percent() * 100
+print "value change %: ", simulation_obj.get_value_change_percent() * 100
+print "value: $", simulation_obj.value()
+print "trades: ", simulation_obj.get_trades()

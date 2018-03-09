@@ -62,6 +62,9 @@ class Simulation():
     def get_end_price(self):
         return self.end_price
     
+    def get_trades(self):
+        return self.trades
+    
     def value(self):
         return self.shares * self.price + self.account
     
@@ -75,8 +78,15 @@ class Simulation():
     
     def execute_action(self, candle):
         time = candle.get_start_time()
-            
-        action = self.trade_actions[time]
+        
+        action = None
+        
+        if time in self.trade_actions.keys():
+            action = self.trade_actions[time]
+        
+        #print "account: ", self.account
+        #print "shares: ", self.shares
+        #print "price: ", candle.get_close_price()
         
         if action == TradeAction.HOLD:
             return
@@ -85,18 +95,20 @@ class Simulation():
                 return               
             curr_price = get_curr_price(candle)
             self.shares += (self.account * self.SHARE_TRADE_RATIO) / curr_price
-            self.account *= self.SHARE_TRADE_RATIO
+            self.account *= (1 - self.SHARE_TRADE_RATIO)
             self.trades += 1
             return
-        #This is a SELL action
-        else:
+        if action == TradeAction.SELL:
             if self.shares == 0:
                 return
             
             curr_price = get_curr_price(candle)
             self.account += curr_price * self.shares * self.SHARE_TRADE_RATIO
-            self.shares *= self.SHARE_TRADE_RATIO
+            self.shares *= (1 - self.SHARE_TRADE_RATIO)
             self.trades += 1
             return
+        
+        return
+        
     
     
