@@ -1,6 +1,8 @@
 from Strategies.StochRSI import StochRSI
 from exchanges.gdax import CandleList
 from Strategies.Trader import Trader
+from lib.Backtest import pull_candles
+from datetime import datetime
 
 test_input = [
     [1514764800, 225, 227.98, 227.18, 226.2, 2146.597926890001],
@@ -160,6 +162,8 @@ expected_stoch_rsi = [
     0.5868178764,
     0.6354319989,
     0.6744425108]
+
+test_input=pull_candles( datetime(2018, 2, 1, 0, 0, 0), datetime(2018, 2, 2, 0, 0, 0), 300)
 
 expected_times = [x[0] for x in test_input[26:]]
 

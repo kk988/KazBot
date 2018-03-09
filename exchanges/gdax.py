@@ -1,3 +1,4 @@
+from datetime import datetime
 
 # Note: Ways to change out of ISO-8601:
 # datetime.datetime.strptime("2014-11-06T10:34:47.123456Z", "%Y-%m-%dT%H:%M:%S.%fZ")
@@ -39,11 +40,11 @@ class CandleList():
 class Candle():
     def __init__(self, candle_info):
         self.start_time = candle_info[0]
-        self.low = candle_info[1]
-        self.high = candle_info[2]
-        self.open_price = candle_info[3]
-        self.close_price = candle_info[4]
-        self.volume = candle_info[5]
+        self.low = float(candle_info[1])
+        self.high = float(candle_info[2])
+        self.open_price = float(candle_info[3])
+        self.close_price = float(candle_info[4])
+        self.volume = float(candle_info[5])
         self.set_gain_loss()
         
     def set_gain_loss(self):

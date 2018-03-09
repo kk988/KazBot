@@ -50,7 +50,7 @@ class Trader():
                   
     def generate_trade_action(self, candle_time):                    
         #if persisted
-        if self.persistence == self.persistence_LIMIT:
+        if self.persistence == self.PERSISTENCE_LIMIT:
             self.persistence = 0
                 
             if self.trend == self.HIGH:
