@@ -1,4 +1,5 @@
-from Strategies.StrategyManager import init_strategy
+from Strategies.StrategyManager import run_strategy
+from Strategies import Trader  
 import datetime
 import iso8601
 import math
@@ -18,9 +19,9 @@ class Backtest():
         
         # use strategy output with exchange rules
         # Call trader to figure out buys/sells
-        self.trading_calls = run_trader(strategy)
+        self.trading_calls = Trader(strategy)
         
-        self.results = generate_result_summary(trading_calls)
+        #self.results = generate_result_summary(trading_calls)
     
     def pull_candles(self, start, end, granularity):
         # Get total number of candles

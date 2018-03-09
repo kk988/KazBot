@@ -5,12 +5,11 @@ class Trader():
     LOW = "LOW"
     s_rsi_high_thresh = 0.8
     s_rsi_low_thresh = 0.2
-    PERSISTANCE_LIMIT = 3
+    PERSISTENCE_LIMIT = 3
     
     def __init__(self, data):
         self.data = data
-        self.persisted = False
-        self.persistance = 0
+        self.persistence = 0
         self.trend = None
         self.run_actions()
     
@@ -21,56 +20,47 @@ class Trader():
     #Trade Actions = [time, action, shares=0]
     def run_actions(self):
         actions = []
-        
         for candle in self.data:
             #test if above high thresh
             if candle[1] >= self.s_rsi_high_thresh:
-                #test if already in high trend
-                if self.trend == self.HIGH:
-                    #increase persistence
-                    self.persistance += 1
-                #not already in trend, start trend, reset persistance
-                else:
-                    self.trend = self.HIGH
-                    self.persistance = 0
-            
+                self.set_trend_and_persistence(self.HIGH)
+                    
             #test if below low thresh
             elif candle[1] <= self.s_rsi_low_thresh:
-                #test if already in low trend
-                if self.trend == self.LOW:
-                    #increase persistance
-                    self.persistance += 1
-                #not already in trend, start trend reset persistance
-                else:
-                    self.trend = self.LOW
-                    self.persistance = 0
+                self.set_trend_and_persistence(self.LOW)
+                    
             #not in trend. so end the trend
             elif self.trend:
                 self.trend = None
-                
-            #test if persisted
-            if self.persistance == self.PERSISTANCE_LIMIT:
-                self.persistance = 0
-                self.persisted = True
-                
-            #generate TradeAction
-            if self.persisted:
-                self.persisted = False
-                
-                if self.trend == self.HIGH:
-                    action = TradeAction.SELL
-                    shares = "all"
-                else:
-                    action = TradeAction.BUY
-                    shares = "all"
-            else:
-                action = TradeAction.HOLD
-                shares = 0
+                self.persistence = 0
             
-            actions.append(TradeAction(candle[0], action, shares))
+            actions.append(self.generate_trade_action(candle[0]))
+             
+        self.actions = actions     
+    
+    def set_trend_and_persistence(self, curr_trend):
+        #test if already in curr trend
+        if self.trend == curr_trend:
+            #increase persistence
+            self.persistence += 1
+        #not already in trend, start trend
+        else:
+            self.trend = curr_trend
+            self.persistence = 0
+                  
+    def generate_trade_action(self, candle_time):                    
+        #if persisted
+        if self.persistence == self.persistence_LIMIT:
+            self.persistence = 0
+                
+            if self.trend == self.HIGH:
+                return TradeAction(candle_time, TradeAction.SELL, 'all')
+            else:
+                return TradeAction(candle_time, TradeAction.BUY, 'all')
+        return TradeAction(candle_time, TradeAction.HOLD, 'all')
                     
-        self.actions = actions
-
+        
+        
 
 
 

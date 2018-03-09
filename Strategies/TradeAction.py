@@ -28,14 +28,3 @@ class TradeAction():
     def get_shares(self):
         return self.shares
     
-    #@classmethod
-    #def BUY(cls):
-    #    return "BUY"
-        
-    #@classmethod
-    #def SELL(cls):
-    #    return "SELL"
-   # 
-   # @classmethod
-   # def HOLD(cls):
-   #     return "HOLD"
