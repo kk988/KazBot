@@ -25,7 +25,6 @@ class Account():
         if shares_to_sell:
             if shares_to_sell > self.shares:
                 raise ValueError("Attempted to sell more shares than you own.")
-                quit
         else:
             shares_to_sell = self.shares
         
@@ -38,7 +37,6 @@ class Account():
         if shares_to_buy:
             if shares_to_buy > (self.balance / share_price):
                 raise ValueError("Attempted to purchase more shares than you can afford.")
-                quit
         else:
             shares_to_buy = self.balance / share_price
         

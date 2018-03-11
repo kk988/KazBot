@@ -35,7 +35,11 @@ if success:
     success = check_value(5200)
 
 print "\nSell 1 share."
-account.sell(share_price, 1)
+try: 
+    account.sell(share_price, 1)
+except Exception, err:
+    print "ERROR: %s" % str(err)
+
 print "Shares, expect 1:", account.get_shares()
 print "Value, expect 5200:", account.value(share_price)
 
@@ -51,7 +55,12 @@ if success:
     success = check_shares(0) and check_value(5200)
 
 print "\nBuy 1 share."
-account.buy(share_price, 1)
+
+try: 
+    account.buy(share_price, 1)
+except Exception, err:
+    print "ERROR: %s" % str(err)
+    
 print "Balance, expect 5100:", account.get_balance()
 print "Value, expect 5200:", account.value(share_price)
 
@@ -62,6 +71,19 @@ print "\nBuy all shares."
 account.buy(share_price)
 print "Balance, expect 0:", account.get_balance()
 print "Value, expect 5200:", account.value(share_price)
+
+print "\nTest errors. Expect now Buy or Sell Action."
+if success:
+    success = False
+    try:
+        account.buy(share_price, 5000)
+    except Exception, err1:
+        try:
+            account.sell(share_price, 100000)
+        except Exception, err2:
+            success = err1 and err2
+            print "Errors returned as expected."
+        
 
 if success:
     success = check_balance(0) and check_value(5200)
