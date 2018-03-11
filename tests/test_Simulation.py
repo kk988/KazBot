@@ -3,11 +3,13 @@ from exchanges.gdax import CandleList
 from Strategies.Simulation import Simulation
 from Strategies.StochRSI import StochRSI
 from Strategies.Trader import Trader
+from Strategies.Account import Account
 from lib.Backtest import pull_candles
 from datetime import datetime
 import iso8601
 import math
 import gdax
+
 
 test_input = [
     [1514764800, 225, 227.98, 227.18, 226.2, 2146.597926890001],
@@ -154,11 +156,13 @@ for action in trade_action_list:
     
 test_candle_list = CandleList(test_input, 900)
 
-test_simulation = Simulation(test_candle_list, trader_output, 5000.00, 0.0)
+account = Account(5000, 0)
+
+test_simulation = Simulation(test_candle_list, trader_output, account)
 
 print "price change %: ", test_simulation.get_price_change_percent() * 100
 print "value change %: ", test_simulation.get_value_change_percent() * 100
-print "value: $", test_simulation.value()
+print "value: $", test_simulation.get_end_value()
 print "trades: ", test_simulation.get_trades()
 
 if round(test_simulation.get_value_change_percent(), 7) == -0.0034501:
