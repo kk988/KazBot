@@ -15,27 +15,23 @@ def convert_trade_actions_to_dict(trade_actions):
 class Simulation():
     SHARE_TRADE_RATIO = 1.0
     
-    def __init__(self, candle_list, trade_actions, account_balance, starting_shares=0):
+    def __init__(self, candle_list, trade_actions, account):
         self.candles = candle_list.get_candle_list()
         self.trade_actions = convert_trade_actions_to_dict(trade_actions)
-        self.shares = starting_shares
-        self.account = account_balance
+        self.account = account
         self.end_value = None
         self.value_change = None
         self.value_percent_change = None
         self.start_price = self.candles[0].get_open_price()
         self.end_price = self.candles[-1].get_close_price()
         self.price = self.start_price
-        self.start_value = self.value()
+        self.start_value = self.account.value(self.price)
         self.price_change = self.end_price - self.start_price
         self.price_change_percent = self.price_change / self.start_price
         self.trades = 0
         self.run()
-        
-    def get_shares(self):
-        return self.shares
     
-    def get_account_balance(self):
+    def get_account(self):
         return self.account
     
     def get_start_value(self):
@@ -65,14 +61,11 @@ class Simulation():
     def get_trades(self):
         return self.trades
     
-    def value(self):
-        return self.shares * self.price + self.account
-    
     def run(self):
         for candle in self.candles:
             self.execute_action(candle)
             
-        self.end_value = self.value()
+        self.end_value = self.account.value(self.get_end_price())
         self.value_change = self.end_value - self.start_value
         self.value_percent_change = self.value_change / self.start_value
     
@@ -84,27 +77,24 @@ class Simulation():
         if time in self.trade_actions.keys():
             action = self.trade_actions[time]
         
-        #print "account: ", self.account
-        #print "shares: ", self.shares
-        #print "price: ", candle.get_close_price()
-        
         if action == TradeAction.HOLD:
             return
+        
+        curr_price = get_curr_price(candle)
+        
         if action == TradeAction.BUY:
-            if self.account == 0:
+            if self.account.get_balance() == 0:
                 return               
-            curr_price = get_curr_price(candle)
-            self.shares += (self.account * self.SHARE_TRADE_RATIO) / curr_price
-            self.account *= (1 - self.SHARE_TRADE_RATIO)
+            shares_to_buy = self.account.get_balance() * self.SHARE_TRADE_RATIO / curr_price
+            self.account.buy(curr_price, shares_to_buy)
             self.trades += 1
             return
+        
         if action == TradeAction.SELL:
-            if self.shares == 0:
+            if self.account.get_shares() == 0:
                 return
-            
-            curr_price = get_curr_price(candle)
-            self.account += curr_price * self.shares * self.SHARE_TRADE_RATIO
-            self.shares *= (1 - self.SHARE_TRADE_RATIO)
+            shares_to_sell = self.account.get_shares() * self.SHARE_TRADE_RATIO
+            self.account.sell(curr_price, shares_to_sell)
             self.trades += 1
             return
         
