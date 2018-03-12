@@ -4,6 +4,7 @@ import datetime
 import iso8601
 import math
 import gdax
+import time
 
 #usage of pull data
 #test_input=pull_candles( datetime(2018, 2, 1, 0, 0, 0), datetime(2018, 2, 2, 0, 0, 0), 300)
@@ -32,19 +33,36 @@ def pull_candles( start, end, granularity):
     
     # If candles > GDAX total (350) iterate over the endpoint
     # to gather all the candles that we can. 
+<<<<<<< Updated upstream
     gdax_max_candles = 350
     
     candle_data = list()
     curr_start = start
     for _ in range(0, int(math.ceil(gdax_max_candles/total_candles))):
         curr_end = curr_start + datetime.timedelta(0,granularity * gdax_max_candles)
+=======
+    gdax_max_candles = 300
+    max_time_interval = datetime.timedelta(0,granularity * gdax_max_candles)
+    required_requests = int(math.ceil(total_candles/gdax_max_candles))
+    public_client = gdax.PublicClient()
+    
+    candle_data = list()
+    curr_start = start
+    for _ in range(0, required_requests):
+        #max queries is 1 per 4 seconds
+        time.sleep(0.5)
+        
+        curr_end = curr_start + max_time_interval
+        print "Curr End:", curr_end
+        
+>>>>>>> Stashed changes
         if curr_end > end:
             curr_end = end
-        public_client = gdax.PublicClient()
+
         response_list = public_client.get_product_historic_rates('LTC-USD', start=curr_start, end=curr_end, granularity=granularity)
         if not isinstance(response_list, list):
             print "UH OH: " + response_list['message'] + "\n"
         candle_data.extend(response_list)
         curr_start = curr_end
             
-        return sorted(candle_data)
+    return sorted(candle_data)
