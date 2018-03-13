@@ -13,10 +13,10 @@ test_input=pull_candles( start, end, granularity )
 for candle in test_input:
     print candle
 
-print "Expected Candles:", expected_num_of_candles
+print "\n\nExpected Candles:", expected_num_of_candles
 print "Actual Candles: ", len(test_input)
 
-print "\n\n"
+print "\n"
 first_candle_time = test_input[0][0]
 last_candle_time = test_input[-1][0]
 
