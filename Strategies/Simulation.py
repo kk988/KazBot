@@ -71,16 +71,16 @@ class Simulation():
         self.value_change = self.end_value - self.start_value
         self.value_percent_change = self.value_change / self.start_value
     
+    def is_actionable(self, time):
+        return time in self.trade_actions and not self.trade_actions[time] == TradeAction.HOLD
+    
     def execute_action(self, candle):
         time = candle.get_start_time()
         
-        action = None
-        
-        if time in self.trade_actions.keys():
-            action = self.trade_actions[time]
-        
-        if action == TradeAction.HOLD:
+        if not self.is_actionable(time):
             return
+        
+        action = self.trade_actions[time]
         
         curr_price = get_curr_price(candle)
         
@@ -99,6 +99,8 @@ class Simulation():
             self.account.sell(curr_price, shares_to_sell)
             self.trades += 1
             return
+        
+        raise AttributeError("Invalid Action: " + str(action))
         
         return
         
