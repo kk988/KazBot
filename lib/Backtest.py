@@ -33,14 +33,14 @@ def pull_candles( start, end, granularity):
     
     # If candles > GDAX total (350) iterate over the endpoint
     # to gather all the candles that we can. 
-<<<<<<< Updated upstream
+
     gdax_max_candles = 350
     
     candle_data = list()
     curr_start = start
     for _ in range(0, int(math.ceil(gdax_max_candles/total_candles))):
         curr_end = curr_start + datetime.timedelta(0,granularity * gdax_max_candles)
-=======
+
     gdax_max_candles = 300
     max_time_interval = datetime.timedelta(0,granularity * gdax_max_candles)
     required_requests = int(math.ceil(total_candles/gdax_max_candles))
@@ -53,9 +53,7 @@ def pull_candles( start, end, granularity):
         time.sleep(0.5)
         
         curr_end = curr_start + max_time_interval
-        print "Curr End:", curr_end
-        
->>>>>>> Stashed changes
+
         if curr_end > end:
             curr_end = end
 
