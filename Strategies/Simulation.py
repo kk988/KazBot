@@ -13,6 +13,8 @@ def convert_trade_actions_to_dict(trade_actions):
     return actions_dict
 
 class Simulation():
+    #Percentage of your balance or shares that you are buying or selling
+    #every time Trader deteremins a buy or sell action
     SHARE_TRADE_RATIO = 1.0
     
     def __init__(self, candle_list, trade_actions, account):
