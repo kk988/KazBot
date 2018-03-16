@@ -22,17 +22,42 @@ class Backtest():
             raise RuntimeError('Something went wrong pulling data for backtest') 
         
         self.candle_list = CandleList(data, granularity)
+        self.granularity = granularity
+        
+        if not kwargs:
+            kwargs = {}
+        
+        self.kwargs = kwargs
+        
         #run strategy, returns trading calls
         
-        print "***************kwargs:\n", kwargs
         self.strategy = run_strategy(strategy, self.candle_list, **kwargs)
         
         # Run simulation on account.
         account = Account(5000)
         self.sim = Simulation(self.candle_list, self.strategy, account, share_trade_ratio)
         
-        generate_result_summary(self.sim, granularity, **kwargs)
-    
+    def generate_result_summary(self):
+        print "\n--------------------"
+        print "Backtest Results"
+        print "--------------------"
+        print "\nStart Time:", self.sim.get_start_datetime()
+        print "End Time:", self.sim.get_end_datetime()
+        print "\nStart Value:", self.sim.get_start_value()
+        print "End Value:", self.sim.get_end_value()
+        print "Value Change:", self.sim.get_value_change()
+        print "\nStart Price:", self.sim.get_start_price()
+        print "End Price:", self.sim.get_end_price()
+        print "Price Change:", self.sim.get_price_change()
+        
+        print "\nGranularity:", self.granularity
+        if self.kwargs:
+            for (key, value) in self.kwargs.iteritems():
+                print ": ".join([str(key), str(value)])
+        print "Value Change Percent:", self.sim.get_value_change_percent() * 100, "%"
+        print "Price Change Percent:", self.sim.get_price_change_percent() * 100, "%"
+        print "Trades: ", self.sim.get_trades()
+        
 def pull_candles( start, end, granularity):
     # Get total number of candles
     total_candles = (end - start).total_seconds() / granularity
@@ -64,23 +89,3 @@ def pull_candles( start, end, granularity):
             
     return sorted(candle_data)
 
-def generate_result_summary(sim, granularity, **kwargs):
-    print "\n--------------------"
-    print "Backtest Results"
-    print "--------------------"
-    print "\nStart Time:", sim.get_start_datetime()
-    print "End Time:", sim.get_end_datetime()
-    print "\nStart Value:", sim.get_start_value()
-    print "End Value:", sim.get_end_value()
-    print "Value Change:", sim.get_value_change()
-    print "\nStart Price:", sim.get_start_price()
-    print "End Price:", sim.get_end_price()
-    print "Price Change:", sim.get_price_change()
-    
-    print "\nGranularity:", granularity
-    if kwargs:
-        for (key, value) in kwargs.iteritems():
-            print ": ".join([str(key), str(value)])
-    print "Value Change Percent:", sim.get_value_change_percent() * 100, "%"
-    print "Price Change Percent:", sim.get_price_change_percent() * 100, "%"
-    print "Trades: ", sim.get_trades()
