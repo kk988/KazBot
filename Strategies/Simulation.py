@@ -9,18 +9,14 @@ def get_curr_price(candle):
 def convert_trade_actions_to_dict(trade_actions):
     actions_dict = dict()
     for action in trade_actions:
-        actions_dict[action.get_time()] = action.get_action()
+        actions_dict[action.get_time()] = {"action": action.get_action(), "percent": action.get_trade_percent()}
         
     return actions_dict
 
 class Simulation():
-    #Share Trade Ratio
-    #Percentage of your balance or shares that you are buying or selling
-    #every time Trader determines a buy or sell action
-    
-    def __init__(self, candle_list, trade_actions, account, share_trade_ratio=1.0):
+    def __init__(self, candle_list, trader, account, share_trade_ratio=1.0):
         self.candles = candle_list.get_candle_list()
-        self.trade_actions = convert_trade_actions_to_dict(trade_actions)
+        self.trade_actions = convert_trade_actions_to_dict(trader.get_actions())
         self.account = account
         self.end_value = None
         self.value_change = None
@@ -82,7 +78,7 @@ class Simulation():
         self.value_percent_change = self.value_change / self.start_value
     
     def is_actionable(self, time):
-        return time in self.trade_actions and not self.trade_actions[time] == TradeAction.HOLD
+        return time in self.trade_actions and not self.trade_actions[time]['action'] == TradeAction.HOLD
     
     def execute_action(self, candle):
         time = candle.get_start_time()
@@ -90,14 +86,15 @@ class Simulation():
         if not self.is_actionable(time):
             return
         
-        action = self.trade_actions[time]
+        action = self.trade_actions[time]['action']
+        percent = self.trade_actions[time]['percent']
         
         curr_price = get_curr_price(candle)
         
         if action == TradeAction.BUY:
             if self.account.get_balance() == 0:
                 return               
-            shares_to_buy = self.account.get_balance() * self.share_trade_ratio / curr_price
+            shares_to_buy = self.account.get_balance() * percent / curr_price
             self.account.buy(curr_price, shares_to_buy)
             self.trades += 1
             return
@@ -105,7 +102,7 @@ class Simulation():
         if action == TradeAction.SELL:
             if self.account.get_shares() == 0:
                 return
-            shares_to_sell = self.account.get_shares() * self.share_trade_ratio
+            shares_to_sell = self.account.get_shares() * percent
             self.account.sell(curr_price, shares_to_sell)
             self.trades += 1
             return

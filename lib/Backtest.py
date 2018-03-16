@@ -21,17 +21,41 @@ class Backtest():
             # something went wrong. create error and exit
             raise RuntimeError('Something went wrong pulling data for backtest') 
         
+        self.granularity = granularity
+        
+        if not kwargs:
+            kwargs = {}
+            
+        self.kwargs = kwargs
         self.candle_list = CandleList(data, granularity)
         #run strategy, returns trading calls
-        
-        print "***************kwargs:\n", kwargs
         self.strategy = run_strategy(strategy, self.candle_list, **kwargs)
         
         # Run simulation on account.
         account = Account(5000)
         self.sim = Simulation(self.candle_list, self.strategy, account, share_trade_ratio)
         
-        generate_result_summary(self.sim, granularity, **kwargs)
+
+    def generate_result_summary(self):
+        print "\n--------------------"
+        print "Backtest Results"
+        print "--------------------"
+        print "\nStart Time:", self.sim.get_start_datetime()
+        print "End Time:", self.sim.get_end_datetime()
+        print "\nStart Value:", self.sim.get_start_value()
+        print "End Value:", self.sim.get_end_value()
+        print "Value Change:", self.sim.get_value_change()
+        print "\nStart Price:", self.sim.get_start_price()
+        print "End Price:", self.sim.get_end_price()
+        print "Price Change:", self.sim.get_price_change()
+        
+        print "\nGranularity:", self.granularity
+        if self.kwargs:
+            for (key, value) in self.kwargs.iteritems():
+                print ": ".join([str(key), str(value)])
+        print "Value Change Percent:", self.sim.get_value_change_percent() * 100, "%"
+        print "Price Change Percent:", self.sim.get_price_change_percent() * 100, "%"
+        print "Trades: ", self.sim.get_trades()
     
 def pull_candles( start, end, granularity):
     # Get total number of candles
