@@ -31,7 +31,7 @@ class Account():
         self.balance += shares_to_sell * share_price
         self.shares -= shares_to_sell
         
-        print "Sell Action Completed"
+        
     
     def buy(self, share_price, shares_to_buy=None):
         if shares_to_buy:
@@ -43,7 +43,6 @@ class Account():
         self.shares += shares_to_buy
         self.balance -= shares_to_buy * share_price
         
-        print "Buy Action Completed"
 
     def value(self, share_price):
         return self.balance + (self.shares * share_price)

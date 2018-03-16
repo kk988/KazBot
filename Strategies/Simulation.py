@@ -99,6 +99,7 @@ class Simulation():
                 return               
             shares_to_buy = self.account.get_balance() * self.share_trade_ratio / curr_price
             self.account.buy(curr_price, shares_to_buy)
+            print "[%s] Buy Action Completed $%s" % (datetime.datetime.fromtimestamp(time), curr_price)
             self.trades += 1
             return
         
@@ -107,6 +108,7 @@ class Simulation():
                 return
             shares_to_sell = self.account.get_shares() * self.share_trade_ratio
             self.account.sell(curr_price, shares_to_sell)
+            print "[%s] Sell Action Completed $%s" % (datetime.datetime.fromtimestamp(time),curr_price)
             self.trades += 1
             return
         

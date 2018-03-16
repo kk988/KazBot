@@ -21,6 +21,8 @@ class Backtest():
             # something went wrong. create error and exit
             raise RuntimeError('Something went wrong pulling data for backtest') 
         
+        data = [ x for x in data if x[0] >= int(iso8601.parse_date(start).strftime('%s')) ]
+
         self.candle_list = CandleList(data, granularity)
         self.granularity = granularity
         
