@@ -110,7 +110,7 @@ class Trader():
                     if curr_price <= self.stop:
                         self.direction = None
                     elif not self.stop == self.breakeven and curr_price >= self.breakeven + (self.risk * 0.5):
-                        self.take_action = [TradeAction.SELL, 0.5]
+                        #self.take_action = [TradeAction.SELL, 0.5]
                         self.stop = self.breakeven
                     elif is_overbought(curr_rsi):
                         self.direction = None
