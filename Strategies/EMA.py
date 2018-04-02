@@ -32,9 +32,11 @@ class EMA():
         return self.results
 
 def parse_data(data):
-    if not isinstance(data, CandleList):
-        return data
-    else:
+    if isinstance(data, CandleList):
         candles = data.get_candle_list()
         
         return [[candle.get_start_time(), candle.get_close_price()] for candle in candles]
+    elif isinstance(data, dict):
+        return [[k,v] for k,v in data.items()]
+    else:
+        return data
