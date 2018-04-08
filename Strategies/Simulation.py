@@ -1,5 +1,5 @@
 from __future__ import print_function
-from TradeAction import TradeAction
+from .TradeAction import TradeAction
 from exchanges.gdax import CandleList
 from exchanges.gdax import Candle
 import datetime

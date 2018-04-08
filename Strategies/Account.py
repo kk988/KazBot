@@ -36,7 +36,7 @@ class Account():
         profit_loss = self.value(share_price) - self.value_at_buy
         percent_change = ( profit_loss / self.value_at_buy ) * 100
         
-        print "P/L", profit_loss, "\tPercent Change:", percent_change, "%"
+        print("P/L", profit_loss, "\tPercent Change:", percent_change, "%")
         
         
     

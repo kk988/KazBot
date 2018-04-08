@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import operator
 # Note: Ways to change out of ISO-8601:
 # datetime.datetime.strptime("2014-11-06T10:34:47.123456Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 # iso8601.parse("2014-11-06T10:34:47.123456Z")
@@ -19,9 +19,11 @@ class CandleList():
     
     def populate_data(self, list_of_candles):
         # check for missing candles
-        for c in sorted(list_of_candles):
+        for c in list_of_candles:
             #self.check_for_missing_candles(c[0])
             self.data.append(Candle(c))
+            
+        self.data.sort(key=operator.attrgetter("start_time"))
             
     # Append empty candles for any time 
     def check_for_missing_candles(self,new_start_time):

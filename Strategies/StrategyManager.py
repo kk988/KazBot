@@ -3,8 +3,8 @@ Created on Feb 11, 2018
 
 @author: kristakazmierkiewicz
 '''
-from StochRSI import StochRSI
-from Trader import Trader
+from .StochRSI import StochRSI
+from .Trader import Trader
 
 def run_strategy(strategy, data, **kwargs):
     if strategy == 'StochRSI':
