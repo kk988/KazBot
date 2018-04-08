@@ -39,6 +39,17 @@ class CandleList():
     
 class Candle():
     def __init__(self, candle_info):
+        if isinstance(candle_info, dict):
+            candle_info = [
+                candle_info['date'],
+                candle_info['low'],
+                candle_info['high'],
+                candle_info['open'],
+                candle_info['close'],
+                candle_info['volume']
+                ]
+        
+        
         self.start_time = candle_info[0]
         self.low = float(candle_info[1])
         self.high = float(candle_info[2])
