@@ -1,13 +1,10 @@
-def stop_loss(candle_list, time, period):
-    
-def price_target(candle_list, time, period):
+def average_candle_length(candle_list, time, period):
+    candles = candle_list.get_candle_list()
+    candle_lengths = {c.get_start_time(): c.get_high() - c.get_low() for c in candles}
     
 def swing_high(candle_list, time, period):
-    
     close_prices = {candle.get_start_time(): candle.get_close_price() for candle in candle_list.get_candle_list()}
-    
     times = sorted(close_prices.keys())
-    
     swing_start = times.index(time)
     
     if swing_start < period:
