@@ -36,7 +36,7 @@ class Backtest():
         self.strategy = run_strategy(strategy, self.candle_list, **kwargs)
         
         # Run simulation on account.
-        account = Account(5000)
+        account = Account(500)
         self.sim = Simulation(self.candle_list, self.strategy, account, share_trade_ratio)
         
     def generate_result_summary(self):

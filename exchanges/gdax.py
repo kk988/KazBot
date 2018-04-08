@@ -14,13 +14,13 @@ class CandleList():
             self.populate_data(list_of_candles)
         
     def add_candle(self, candle_obj):
-        self.check_for_missing_candles(candle_obj.get_start_time())
+        #self.check_for_missing_candles(candle_obj.get_start_time())
         self.data.append(candle_obj)
     
     def populate_data(self, list_of_candles):
         # check for missing candles
         for c in sorted(list_of_candles):
-            self.check_for_missing_candles(c[0])
+            #self.check_for_missing_candles(c[0])
             self.data.append(Candle(c))
             
     # Append empty candles for any time 
