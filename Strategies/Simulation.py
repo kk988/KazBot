@@ -1,6 +1,8 @@
-from TradeAction import TradeAction
+from __future__ import print_function
+from .TradeAction import TradeAction
 from exchanges.gdax import CandleList
 from exchanges.gdax import Candle
+import datetime
 
 def get_curr_price(candle):
     return candle.get_close_price()
@@ -13,11 +15,11 @@ def convert_trade_actions_to_dict(trade_actions):
     return actions_dict
 
 class Simulation():
+    #Share Trade Ratio
     #Percentage of your balance or shares that you are buying or selling
-    #every time Trader deteremins a buy or sell action
-    SHARE_TRADE_RATIO = 1.0
+    #every time Trader determines a buy or sell action
     
-    def __init__(self, candle_list, trade_actions, account):
+    def __init__(self, candle_list, trade_actions, account, share_trade_ratio=1.0):
         self.candles = candle_list.get_candle_list()
         self.trade_actions = convert_trade_actions_to_dict(trade_actions)
         self.account = account
@@ -27,14 +29,23 @@ class Simulation():
         self.start_price = self.candles[0].get_open_price()
         self.end_price = self.candles[-1].get_close_price()
         self.price = self.start_price
+        self.start_datetime = datetime.datetime.fromtimestamp(self.candles[0].get_start_time())
+        self.end_datetime = datetime.datetime.fromtimestamp(self.candles[-1].get_start_time())
         self.start_value = self.account.value(self.price)
         self.price_change = self.end_price - self.start_price
         self.price_change_percent = self.price_change / self.start_price
+        self.share_trade_ratio = share_trade_ratio
         self.trades = 0
         self.run()
     
     def get_account(self):
         return self.account
+    
+    def get_start_datetime(self):
+        return self.start_datetime
+    
+    def get_end_datetime(self):
+        return self.end_datetime
     
     def get_start_value(self):
         return self.start_value
@@ -87,15 +98,17 @@ class Simulation():
         if action == TradeAction.BUY:
             if self.account.get_balance() == 0:
                 return               
-            shares_to_buy = self.account.get_balance() * self.SHARE_TRADE_RATIO / curr_price
+            shares_to_buy = self.account.get_balance() * self.share_trade_ratio / curr_price
             self.account.buy(curr_price, shares_to_buy)
+            print("[%s] Buy $%s" % (datetime.datetime.fromtimestamp(time), curr_price), end="\t")
             self.trades += 1
             return
         
         if action == TradeAction.SELL:
             if self.account.get_shares() == 0:
                 return
-            shares_to_sell = self.account.get_shares() * self.SHARE_TRADE_RATIO
+            shares_to_sell = self.account.get_shares() * self.share_trade_ratio
+            print("[%s] Sell $%s" % (datetime.datetime.fromtimestamp(time),curr_price), end="\t")
             self.account.sell(curr_price, shares_to_sell)
             self.trades += 1
             return
