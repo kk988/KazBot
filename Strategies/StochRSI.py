@@ -3,7 +3,7 @@ import datetime
 
 class StochRSI():
     def __init__(self, candles, n_period):
-        self.n_period = 3 # n_period
+        self.n_period = n_period
         self.candles = candles
         rsi_obj = RSI.RSI(self.candles, n_period)
         self.rsi_list = rsi_obj.get_calculated_rsi_vals()
