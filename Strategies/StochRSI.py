@@ -1,4 +1,5 @@
-import RSI
+from . import RSI
+import datetime
 
 class StochRSI():
     def __init__(self, candles, n_period):
@@ -25,7 +26,11 @@ class StochRSI():
             curr_rsi = test_range[-1]
             
             #calculate Stoch RSI
-            s_rsi = ((curr_rsi[1] - min_rsi) / (max_rsi - min_rsi))
+            try:
+                s_rsi = ((curr_rsi[1] - min_rsi) / (max_rsi - min_rsi))
+            except Exception as err:
+                print("bad spot ", datetime.datetime.fromtimestamp(curr_rsi[0]), "max:", str(max_rsi), " min:", str(min_rsi))
+                s_rsi = 0.5
             
             #append rsi to current list of values
             self.vals.append([curr_rsi[0], s_rsi])

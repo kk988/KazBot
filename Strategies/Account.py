@@ -32,12 +32,12 @@ class Account():
         
         self.balance += shares_to_sell * share_price
         self.shares -= shares_to_sell
+        self.shares = round(self.shares, 5)
         
         profit_loss = self.value(share_price) - self.value_at_buy
-        percent_change = profit_loss / self.value_at_buy
+        percent_change = ( profit_loss / self.value_at_buy ) * 100
         
-        print "P/L", profit_loss
-        print "Percent Change:", percent_change, "%"
+        print("P/L", profit_loss, "\tPercent Change:", percent_change, "%")
         
         
     
@@ -50,6 +50,7 @@ class Account():
         
         self.shares += shares_to_buy
         self.balance -= shares_to_buy * share_price
+        self.balance = round(self.balance, 5)
         
         self.value_at_buy = self.value(share_price)
 
