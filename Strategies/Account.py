@@ -31,7 +31,8 @@ class Account():
             shares_to_sell = self.shares
         
         self.balance += shares_to_sell * share_price
-        self.shares = 0 #-= shares_to_sell
+        self.shares -= shares_to_sell
+        self.shares = round(self.shares, 5)
         
         profit_loss = self.value(share_price) - self.value_at_buy
         percent_change = ( profit_loss / self.value_at_buy ) * 100
@@ -48,7 +49,8 @@ class Account():
             shares_to_buy = self.balance / share_price
         
         self.shares += shares_to_buy
-        self.balance = 0 #shares_to_buy * share_price
+        self.balance -= shares_to_buy * share_price
+        self.balance = round(self.balance, 5)
         
         self.value_at_buy = self.value(share_price)
 
