@@ -109,14 +109,14 @@ histo = macd.get_histogram()
 
 histo = {k: round(v, 11) for (k, v) in histo.items()}
 
-print histo
+print(histo)
 
 if len(histo) == len(expected_out):
     for time in sorted(histo.keys()):
         if not histo[time] == expected_out[time]:
-            print time, ": "
-            print histo[time], expected_out[time]
+            print(time, ": ")
+            print(histo[time], expected_out[time])
 else:
-    print "Different number of results"
+    print("Different number of results")
 
-print histo == expected_out
+print(histo == expected_out)

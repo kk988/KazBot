@@ -12,7 +12,7 @@ class EMA():
         sma = float(sum([x[1] for x in curr_vals])) / float(self.n_periods)
         curr_time = curr_vals[-1][0]
         multiplier = (2.0 / (self.n_periods + 1.0))
-        print "Multiplier: ", multiplier
+        print("Multiplier: ", multiplier)
         
         self.results = [[curr_time, sma]]
         

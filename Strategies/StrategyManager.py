@@ -6,7 +6,7 @@ Created on Feb 11, 2018
 
 from .StochRSI import StochRSI
 from .Trader import Trader
-import MACD
+from . import MACD
 
 def run_strategy(strategy, data, **kwargs):
     if isinstance(strategy, str):
@@ -23,5 +23,7 @@ def run_strategy(strategy, data, **kwargs):
     if 'MACD' in strategy:
         if trades:
             trades = trades & set(MACD.Trader(data).get_actions())
+        else:
+            trades = set(MACD.Trader(data).get_actions())
             
     return list(trades)
