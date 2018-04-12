@@ -1,7 +1,7 @@
 # KazBot
 Maybe this will become a crypto-coin trading bot using gdax exchange
 
-Developed using python 2.7.10
+Developed using python 3.6.5
 
 Required:
 iso8601
