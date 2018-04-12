@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import operator
 # Note: Ways to change out of ISO-8601:
 # datetime.datetime.strptime("2014-11-06T10:34:47.123456Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 # iso8601.parse("2014-11-06T10:34:47.123456Z")
@@ -14,14 +14,16 @@ class CandleList():
             self.populate_data(list_of_candles)
         
     def add_candle(self, candle_obj):
-        self.check_for_missing_candles(candle_obj.get_start_time())
+        #self.check_for_missing_candles(candle_obj.get_start_time())
         self.data.append(candle_obj)
     
     def populate_data(self, list_of_candles):
         # check for missing candles
-        for c in sorted(list_of_candles):
-            self.check_for_missing_candles(c[0])
+        for c in list_of_candles:
+            #self.check_for_missing_candles(c[0])
             self.data.append(Candle(c))
+            
+        self.data.sort(key=operator.attrgetter("start_time"))
             
     # Append empty candles for any time 
     def check_for_missing_candles(self,new_start_time):
@@ -39,6 +41,17 @@ class CandleList():
     
 class Candle():
     def __init__(self, candle_info):
+        if isinstance(candle_info, dict):
+            candle_info = [
+                candle_info['date'],
+                candle_info['low'],
+                candle_info['high'],
+                candle_info['open'],
+                candle_info['close'],
+                candle_info['volume']
+                ]
+        
+        
         self.start_time = candle_info[0]
         self.low = float(candle_info[1])
         self.high = float(candle_info[2])

@@ -1,4 +1,4 @@
-from TradeAction import TradeAction
+from .TradeAction import TradeAction
 
 class Trader():
     HIGH = "HIGH"

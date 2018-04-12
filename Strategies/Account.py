@@ -1,7 +1,9 @@
+from lib2to3.pgen2.token import PERCENT
 class Account():
     def __init__(self, starting_balance=0, starting_shares=0):
         self.balance = float(starting_balance)
         self.shares = float(starting_shares)
+        self.value_at_buy = 0
         
     def get_balance(self):
         return self.balance
@@ -30,8 +32,14 @@ class Account():
         
         self.balance += shares_to_sell * share_price
         self.shares -= shares_to_sell
+        self.shares = round(self.shares, 5)
         
-        print "Sell Action Completed"
+        profit_loss = self.value(share_price) - self.value_at_buy
+        percent_change = ( profit_loss / self.value_at_buy ) * 100
+        
+        print("P/L", profit_loss, "\tPercent Change:", percent_change, "%")
+        
+        
     
     def buy(self, share_price, shares_to_buy=None):
         if shares_to_buy:
@@ -42,8 +50,9 @@ class Account():
         
         self.shares += shares_to_buy
         self.balance -= shares_to_buy * share_price
+        self.balance = round(self.balance, 5)
         
-        print "Buy Action Completed"
+        self.value_at_buy = self.value(share_price)
 
     def value(self, share_price):
         return self.balance + (self.shares * share_price)

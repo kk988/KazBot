@@ -1,5 +1,10 @@
+from __future__ import print_function
 from Strategies.StrategyManager import run_strategy
-from Strategies import Trader  
+from Strategies.Trader import Trader  
+from Strategies.Account import Account
+from Strategies.Simulation import Simulation
+from exchanges.gdax import CandleList
+from poloniex import Poloniex
 import datetime
 import iso8601
 import math
@@ -10,24 +15,63 @@ import time
 #test_input=pull_candles( datetime(2018, 2, 1, 0, 0, 0), datetime(2018, 2, 2, 0, 0, 0), 300)
 
 class Backtest():
-    def __init__(self, start, end, granularity, strategy, **kwargs):
+    def __init__(self, exchange, start, end, granularity, strategy, share_trade_ratio, **kwargs):
         # Pull data
         # Not sure if I'll need to save this.
-        self.data = pull_candles(iso8601.parse_date(start), iso8601.parse_date(end), granularity)
-        if not self.data:
+        pull_exchange = {
+            'gdax': gdax_pull_candles,
+            'poloniex': polo_pull_candles
+            }
+        
+        if kwargs:
+            self.args = kwargs
+        else:
+            self.args = {}
+        
+        data = pull_exchange[exchange](iso8601.parse_date(start), iso8601.parse_date(end), granularity)
+        if not data:
             # something went wrong. create error and exit
             raise RuntimeError('Something went wrong pulling data for backtest') 
-            
-        #run strategy
-        self.strategy = run_strategy(strategy, self.data, **kwargs)
         
-        # use strategy output with exchange rules
-        # Call trader to figure out buys/sells
-        self.trading_calls = Trader(strategy)
+        #What is the purpose of this???
+        #data = [ x for x in data if x[0] >= int(iso8601.parse_date(start).strftime('%s')) ]
+
+        self.candle_list = CandleList(data, granularity)
+        self.granularity = granularity
         
-        #self.results = generate_result_summary(trading_calls)
-    
-def pull_candles( start, end, granularity):
+        
+        
+        
+        #run strategy, returns trading calls
+        
+        self.strategy = run_strategy(strategy, self.candle_list, **kwargs)
+        
+        # Run simulation on account.
+        account = Account(500)
+        self.sim = Simulation(self.candle_list, self.strategy, account, share_trade_ratio)
+        
+    def generate_result_summary(self):
+        print("\n--------------------")
+        print("Backtest Results")
+        print("--------------------")
+        print("\nStart Time:", self.sim.get_start_datetime())
+        print("End Time:", self.sim.get_end_datetime())
+        print("\nStart Value:", self.sim.get_start_value())
+        print("End Value:", self.sim.get_end_value())
+        print("Value Change:", self.sim.get_value_change())
+        print("\nStart Price:", self.sim.get_start_price())
+        print("End Price:", self.sim.get_end_price())
+        print("Price Change:", self.sim.get_price_change())
+        
+        print("\nGranularity:", self.granularity)
+        if self.args:
+            for (key, value) in self.args.items():
+                print(": ".join([str(key), str(value)]))
+        print("Value Change Percent:", self.sim.get_value_change_percent() * 100, "%")
+        print("Price Change Percent:", self.sim.get_price_change_percent() * 100, "%")
+        print("Trades: ", self.sim.get_trades())
+        
+def gdax_pull_candles( start, end, granularity):
     # Get total number of candles
     total_candles = (end - start).total_seconds() / granularity
     
@@ -49,11 +93,20 @@ def pull_candles( start, end, granularity):
         
         #max queries is 1 per 4 seconds
         time.sleep(query_delay)
-        print "Pulling candle from", curr_start, "to", curr_end
+        print("Pulling candle from", curr_start, "to", curr_end)
         response_list = public_client.get_product_historic_rates('LTC-USD', start=curr_start, end=curr_end, granularity=granularity)
         if not isinstance(response_list, list):
-            print "UH OH: " + response_list['message'] + "\n"
+            print("UH OH: " + response_list['message'] + "\n")
         candle_data.extend(response_list)
         curr_start = curr_end
             
     return sorted(candle_data)
+
+def polo_pull_candles( start, end, granularity ):
+    start = datetime.datetime.timestamp(start)
+    end = datetime.datetime.timestamp(end)
+    
+    polo = Poloniex()
+    
+    return polo.returnChartData('USDT_LTC', granularity, start, end)
+
