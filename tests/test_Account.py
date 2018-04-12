@@ -1,94 +1,45 @@
+import unittest
 from Strategies.Account import Account
 
-share_price = 100.0
-account = Account()
+SHARE_PRICE = 100.0
 
-def check_value(expected):
-    global account, share_price
-    return account.value(share_price) == expected
-
-def check_shares(expected):
-    global account
-    return account.get_shares() == expected
-
-def check_balance(expected):
-    global account
-    return account.get_balance() == expected
-
-print "Share Price:", share_price
-print "Starting Value, expect 0:", account.value(share_price)
-
-success = check_value(0)
+class TestAccount(unittest.TestCase):
+    account = Account()
     
-print "\nAdding $5000 to account balance."
-account.increase_balance(5000)
-print "Value, expect 5000:", account.value(share_price)
-
-if success:
-    success = check_value(5000)
-
-print "\nAdding 2 share to account."
-account.increase_shares(2)
-print "Value, expect 5200:", account.value(share_price)
-
-if success:
-    success = check_value(5200)
-
-print "\nSell 1 share."
-try: 
-    account.sell(share_price, 1)
-except Exception, err:
-    print "ERROR: %s" % str(err)
-
-print "Shares, expect 1:", account.get_shares()
-print "Value, expect 5200:", account.value(share_price)
-
-if success:
-    success = check_shares(1) and check_value(5200)
-
-print "\nSell all shares."
-account.sell(share_price)
-print "Shares, expect 0:", account.get_shares()
-print "Value, expect 5200:", account.value(share_price)
-
-if success:
-    success = check_shares(0) and check_value(5200)
-
-print "\nBuy 1 share."
-
-try: 
-    account.buy(share_price, 1)
-except Exception, err:
-    print "ERROR: %s" % str(err)
+    def test_1_inital_value(self):
+        self.assertEqual(self.account.value(SHARE_PRICE), 0, "default init account value")
+        
+    def test_2_adding_money(self):
+        self.account.increase_balance(5000)
+        self.assertEqual(self.account.value(SHARE_PRICE), 5000, "increase balance 5000")
+        
+    def test_3_add_shares(self):
+        self.account.increase_shares(2)
+        self.assertEqual(self.account.value(SHARE_PRICE), 5200, "increase 2 shares")
     
-print "Balance, expect 5100:", account.get_balance()
-print "Value, expect 5200:", account.value(share_price)
+    def test_4_buy_shares(self):
+        self.account.buy(SHARE_PRICE,1)
+        self.assertEqual(self.account.get_shares(), 3, "buy 1 share - check shares")
+        self.assertEqual(self.account.get_balance(), 4900, "buy 1 share - check balance")
+        self.assertEqual(self.account.value(SHARE_PRICE), 5200, "buy 1 share - check balance")
+        
+        self.account.buy(SHARE_PRICE)
+        self.assertEqual(self.account.get_balance(), 0, "buy as many shares - balance")
+        self.assertEqual(self.account.value(SHARE_PRICE), 5200, "buy as many shares - value")
+        
+    def test_5_sell_shares(self):
+        self.account.sell(SHARE_PRICE, 1)
+        self.assertEqual(self.account.get_shares(), 51, "sell 1 share - check shares")
+        self.assertEqual(self.account.value(SHARE_PRICE), 5200, "sell 1 share - check value")
+        
+        self.account.sell(SHARE_PRICE) # sell all shares
+        self.assertEqual(self.account.get_shares(), 0, "sell all shares - check shares")
+        self.assertEqual(self.account.value(SHARE_PRICE), 5200, "sell all shares - check value")
 
-if success:
-    success = check_balance(5100) and check_value(5200)
-    
-print "\nBuy all shares."
-account.buy(share_price)
-print "Balance, expect 0:", account.get_balance()
-print "Value, expect 5200:", account.value(share_price)
+    def test_6_exceptions(self):
+        self.assertRaises(ValueError, self.account.buy, SHARE_PRICE, 5000)
+        self.assertRaises(ValueError, self.account.sell, SHARE_PRICE, 10000)
 
-print "\nTest errors. Expect now Buy or Sell Action."
-if success:
-    success = False
-    try:
-        account.buy(share_price, 5000)
-    except Exception, err1:
-        try:
-            account.sell(share_price, 100000)
-        except Exception, err2:
-            success = err1 and err2
-            print "Errors returned as expected."
+
         
 
-if success:
-    success = check_balance(0) and check_value(5200)
-
-if success:
-    print "\nSUCCESS!"
-else:
-    print "\nFAILURE!"
