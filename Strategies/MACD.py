@@ -2,7 +2,6 @@ from Strategies.EMA import EMA
 from operator import indexOf
 import operator
 from Strategies.TradeAction import TradeAction
-from Strategies.TraderTools import *
 
 class MACD():
     def __init__(self, data):
@@ -92,27 +91,9 @@ class Trader():
             if histo_change or macd_change:
                 if histo_change > 0 or macd_change > 0:
                     self.actions.append(TradeAction(time, TradeAction.BUY))
-                    variation = average_candle_length(self.candle_list_obj, time, self.AVG_CANDLE_PERIOD) * self.STOP_FACTOR
-                    self.stop = candle.get_low() - variation
-                    self.target = candle.get_high() + variation
-                #else:
-                    #self.actions.append(TradeAction(time, TradeAction.SELL))
-                    #self.stop = None
-                    #self.target = None
-                    
-            if self.stop or self.target:
-                if self.stop >= candle.get_close_price():
-                    self.actions.append(TradeAction(time, TradeAction.SELL))
-                    self.stop = None
-                    self.target = None
-                elif self.target <= candle.get_close_price():
-                    self.actions.append(TradeAction(time, TradeAction.SELL))
-                    self.stop = None
-                    self.target = None
                 else:
-                    variation = average_candle_length(self.candle_list_obj, time, self.AVG_CANDLE_PERIOD) * self.STOP_FACTOR
-                    self.stop = candle.get_low() - variation
-                    self.target = candle.get_high() + variation
+                    self.actions.append(TradeAction(time, TradeAction.SELL))
+
     
     def get_actions(self):
         return self.actions
