@@ -1,9 +1,6 @@
-from Strategies.StochRSI import StochRSI
-from exchanges.gdax import CandleList
 from Strategies.Trader import Trader
-from lib.Backtest import pull_candles
-from datetime import datetime
 from Strategies.TradeAction import TradeAction
+import unittest
 
 test_input = [
     [1514764800, 225, 227.98, 227.18, 226.2, 2146.597926890001],
@@ -236,32 +233,23 @@ stoch_rsi_output = [
     [1514821500,0.67444251]
 ]
 
-expected_output = []
+class TestTrader(unittest.TestCase):
+    trader = Trader(stoch_rsi_output)
+    trade_actions = trader.get_actions()
+    expected_output = []
+    for action in expected_results:
+        expected_output.append(TradeAction(action[0], action[1]))
 
-for action in expected_results:
-    expected_output.append(TradeAction(action[0], action[1]))
-
-def trade_action_is_equal(t_a1, t_a2):
-    return t_a1.get_time() == t_a2.get_time() and t_a1.get_action() == t_a2.get_action()
-
-my_trader = Trader(stoch_rsi_output)
-
-my_vals = my_trader.get_actions()
-
-print "My Output          Correct Output"
-for pair in zip(my_vals,expected_output):
-    print str(pair[0]) + "   " + str(pair[1])
-
-correct_output = len(my_vals) == len(expected_output)
-
-while correct_output and my_vals:
-    curr_val = my_vals.pop(0)
-    curr_expect = expected_output.pop(0)
+    def test_trade_action_length(self):
+        self.assertEqual(len(self.trade_actions), len(self.expected_output))
     
-    if not trade_action_is_equal(curr_val, curr_expect):
-        correct_output = False
-
-if correct_output:
-    print "Correct Output"
-else:
-    print "There's a problem"
+    def test_individual_trades(self):
+        while self.trade_actions:
+            cur_trade_action = self.trade_actions.pop()
+            cur_expected_result = self.expected_output.pop()
+            
+            self.trade_action_is_equal(cur_trade_action, cur_expected_result)
+    
+    def trade_action_is_equal(self, t_a1, t_a2):
+        self.assertEqual( t_a1.get_time(), t_a2.get_time())
+        self.assertEqual(t_a1.get_action(), t_a2.get_action())

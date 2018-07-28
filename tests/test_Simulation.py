@@ -1,15 +1,12 @@
 from Strategies.TradeAction import TradeAction
 from exchanges.gdax import CandleList
 from Strategies.Simulation import Simulation
-from Strategies.StochRSI import StochRSI
-from Strategies.Trader import Trader
 from Strategies.Account import Account
-from lib.Backtest import pull_candles
-from datetime import datetime
-import iso8601
-import math
-import gdax
+import unittest
 
+HOLD = TradeAction.HOLD
+BUY = TradeAction.BUY
+SELL = TradeAction.SELL
 
 test_input = [
     [1514764800, 225, 227.98, 227.18, 226.2, 2146.597926890001],
@@ -78,10 +75,6 @@ test_input = [
     [1514821500, 225, 225.77, 225.04, 225.22, 866.0745182299999]
 ]
 
-HOLD = TradeAction.HOLD
-BUY = TradeAction.BUY
-SELL = TradeAction.SELL
-
 trade_action_list=[
     [1514764800,HOLD],
     [1514765700,HOLD],
@@ -149,23 +142,34 @@ trade_action_list=[
     [1514821500,HOLD]
 ]
 
-trader_output = []
-
-for action in trade_action_list:
-    trader_output.append(TradeAction(action[0], action[1]))
-    
 test_candle_list = CandleList(test_input, 900)
 
-account = Account(5000, 0)
+class TestSimulation(unittest.TestCase):
+    expected = {
+            "price_change" : -0.0086275,
+            "value_change" : -0.0034501,
+            "end_value" : 4982.749,
+            "trades" : 2
+        }
 
-test_simulation = Simulation(test_candle_list, trader_output, account)
+    #set up and run simulation
+    trader_output = []
 
-print "price change %: ", test_simulation.get_price_change_percent() * 100
-print "value change %: ", test_simulation.get_value_change_percent() * 100
-print "value: $", test_simulation.get_end_value()
-print "trades: ", test_simulation.get_trades()
+    for action in trade_action_list:
+        trader_output.append(TradeAction(action[0], action[1]))
+    
+    account = Account(5000, 0)
+    
+    test_simulation = Simulation(test_candle_list, trader_output, account)
 
-if round(test_simulation.get_value_change_percent(), 7) == -0.0034501:
-    print "\nCorrect Output."
-else:
-    print "\nIncorrect Output."
+    def test_price_change(self):
+        self.assertEqual(round(self.test_simulation.get_price_change_percent(),7), self.expected['price_change'])
+
+    def test_value_change(self):
+        self.assertEqual(round(self.test_simulation.get_value_change_percent(),7), self.expected['value_change'])
+        
+    def test_end_value(self):
+        self.assertEqual(round(self.test_simulation.get_end_value(),3), self.expected['end_value'])
+        
+    def test_num_trades(self):
+        self.assertEqual(self.test_simulation.get_trades(), self.expected['trades'])
