@@ -39,6 +39,9 @@ class CandleList():
     def get_candle_list(self):
         return self.data
     
+    def get_granularity(self):
+        return self.granularity
+    
 class Candle():
     def __init__(self, candle_info):
         if isinstance(candle_info, dict):
