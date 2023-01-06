@@ -1,4 +1,3 @@
-from exchanges.gdax import CandleList
 
 class RSI():
     def __init__ (self,list_of_candles, n_periods):

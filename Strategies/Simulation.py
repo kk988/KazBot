@@ -1,8 +1,5 @@
 from __future__ import print_function
 from .TradeAction import TradeAction
-from exchanges.gdax import CandleList
-from exchanges.gdax import Candle
-import datetime
 
 def get_curr_price(candle):
     return candle.get_close_price()
@@ -29,8 +26,8 @@ class Simulation():
         self.start_price = self.candles[0].get_open_price()
         self.end_price = self.candles[-1].get_close_price()
         self.price = self.start_price
-        self.start_datetime = datetime.datetime.fromtimestamp(self.candles[0].get_start_time())
-        self.end_datetime = datetime.datetime.fromtimestamp(self.candles[-1].get_start_time())
+        self.start_datetime = self.candles[0].get_start_time()
+        self.end_datetime = self.candles[-1].get_start_time()
         self.start_value = self.account.value(self.price)
         self.price_change = self.end_price - self.start_price
         self.price_change_percent = self.price_change / self.start_price
@@ -100,7 +97,7 @@ class Simulation():
                 return               
             shares_to_buy = self.account.get_balance() * self.share_trade_ratio / curr_price
             self.account.buy(curr_price, shares_to_buy)
-            print("[%s] Buy $%s" % (datetime.datetime.fromtimestamp(time), curr_price), end="\t")
+            print("[%s] Buy $%s" % (time, curr_price), end="\t")
             self.trades += 1
             return
         
@@ -108,7 +105,7 @@ class Simulation():
             if self.account.get_shares() == 0:
                 return
             shares_to_sell = self.account.get_shares() * self.share_trade_ratio
-            print("[%s] Sell $%s" % (datetime.datetime.fromtimestamp(time),curr_price), end="\t")
+            print("[%s] Sell $%s" % (time,curr_price), end="\t")
             self.account.sell(curr_price, shares_to_sell)
             self.trades += 1
             return

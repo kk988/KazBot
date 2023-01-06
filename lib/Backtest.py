@@ -3,12 +3,11 @@ from Strategies.StrategyManager import run_strategy
 from Strategies.Trader import Trader  
 from Strategies.Account import Account
 from Strategies.Simulation import Simulation
-from exchanges.gdax import CandleList
-from poloniex import Poloniex
+from model.CandleList import CandleList
 import datetime
 import iso8601
 import math
-import gdax
+import coinbasepro as gdax
 import time
 
 #usage of pull data
@@ -20,7 +19,6 @@ class Backtest():
         # Not sure if I'll need to save this.
         pull_exchange = {
             'gdax': gdax_pull_candles,
-            'poloniex': polo_pull_candles
             }
         
         if kwargs:
@@ -96,19 +94,12 @@ def gdax_pull_candles( start, end, granularity):
         #max queries is 1 per 4 seconds
         time.sleep(query_delay)
         print("Pulling candle from", curr_start, "to", curr_end)
-        response_list = public_client.get_product_historic_rates('LTC-USD', start=curr_start, end=curr_end, granularity=granularity)
+        response_list = public_client.get_product_historic_rates('BTC-USD', start=curr_start, stop=curr_end, granularity=granularity)
         if not isinstance(response_list, list):
             print("UH OH: " + response_list['message'] + "\n")
         candle_data.extend(response_list)
         curr_start = curr_end
             
-    return sorted(candle_data)
+    return sorted(candle_data, key = lambda x: x['time'])
 
-def polo_pull_candles( start, end, granularity ):
-    start = datetime.datetime.timestamp(start)
-    end = datetime.datetime.timestamp(end)
-    
-    polo = Poloniex()
-    
-    return polo.returnChartData('USDT_LTC', granularity, start, end)
 

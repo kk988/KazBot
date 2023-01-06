@@ -1,4 +1,4 @@
-from exchanges.gdax import CandleList
+from model.CandleList import CandleList
 class EMA():
     def __init__(self, data, n_periods):
         self.data = parse_data(data)

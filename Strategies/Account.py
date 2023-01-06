@@ -1,4 +1,3 @@
-from lib2to3.pgen2.token import PERCENT
 class Account():
     def __init__(self, starting_balance=0, starting_shares=0):
         self.balance = float(starting_balance)
